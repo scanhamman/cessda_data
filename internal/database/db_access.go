@@ -14,7 +14,7 @@ import (
 var settings string // string for relative path of settings file
 
 func init() {
-	settings = "./data/db_settings.json"
+	settings = "../internal/database/db_settings.json"
 }
 
 type Credentials struct {
@@ -28,8 +28,10 @@ func GetConnectionString(db_name string) string {
 
 	content, err := ioutil.ReadFile(settings)
 	if err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
+
 	var c Credentials
 	err = json.Unmarshal(content, &c)
 	if err != nil {
@@ -50,21 +52,24 @@ func StoreIdentifiers(idents []Identifier) {
 	}
 	defer conn.Close(context.Background())
 
-
 	SliceAsRows := [][]interface{}{}
 	for _, i := range idents {
-	{
 		SliceAsRows = append(SliceAsRows, []interface{}{i.Id, i.Status})
 	}
-	
+	fmt.Println("created slice as rows")
 	var columns = []string{"id", "status"}
-	var tablename  = []string{"da", "identifiers"}
+	var tablename = []string{"da", "identifiers"}
 
-	copyCount, err := conn.CopyFrom(
-		context.Background(), 
-		tablename, 
+	_, err = conn.CopyFrom(
+		context.Background(),
+		tablename,
 		columns,
 		pgx.CopyFromRows(SliceAsRows))
 
-}
+	if err != nil {
+		os.Exit(1)
+	}
 
+	fmt.Println("allegedly done")
+
+}
