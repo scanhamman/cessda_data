@@ -69,7 +69,5 @@ func StoreIdentifiers(idents []Identifier) {
 	if err != nil {
 		os.Exit(1)
 	}
-
-	fmt.Println("allegedly done")
-
+	fmt.Println("rows stored in db")
 }

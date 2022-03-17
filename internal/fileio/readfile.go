@@ -53,7 +53,6 @@ func ScrapeHeaderList(token string) (string, bool, error) {
 		id := header.Find("identifier").Text()
 		status, _ := header.Attr("status")
 		idents = append(idents, database.Identifier{Id: id, Status: status})
-		fmt.Println(id, status)
 	})
 
 	var file_ended bool = false
